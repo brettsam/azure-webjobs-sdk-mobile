@@ -6,7 +6,7 @@ using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Bindings.Path;
 using Microsoft.Azure.WebJobs.Host.Protocols;
 
-namespace Microsoft.Azure.WebJobs.ServiceBus.EasyTables
+namespace WebJobs.Extensions.EasyTables
 {
     internal class EasyTableItemBinding : IBinding
     {

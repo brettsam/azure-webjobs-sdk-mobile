@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Microsoft.Azure.WebJobs
+namespace WebJobs.Extensions.EasyTables
 {
     /// <summary>
     ///

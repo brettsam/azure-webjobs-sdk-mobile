@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Protocols;
 
-namespace Microsoft.Azure.WebJobs.ServiceBus.EasyTables
+namespace WebJobs.Extensions.EasyTables
 {
     internal class EasyTableQueryBinding : IBinding
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.WindowsAzure.MobileServices;
 using WebJobs.Extensions.EasyTables;
 
-namespace Microsoft.Azure.WebJobs.ServiceBus.EasyTables
+namespace WebJobs.Extensions.EasyTables
 {
     internal class EasyTableContext
     {

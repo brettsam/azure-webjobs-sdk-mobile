@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs.ServiceBus.EasyTables;
+using WebJobs.Extensions.EasyTables;
 using Xunit;
 
 namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable

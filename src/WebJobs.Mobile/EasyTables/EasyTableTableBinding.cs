@@ -6,7 +6,7 @@ using Microsoft.Azure.WebJobs.Host.Protocols;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
 
-namespace Microsoft.Azure.WebJobs.ServiceBus.EasyTables
+namespace WebJobs.Extensions.EasyTables
 {
     internal class EasyTableTableBinding : IBinding
     {

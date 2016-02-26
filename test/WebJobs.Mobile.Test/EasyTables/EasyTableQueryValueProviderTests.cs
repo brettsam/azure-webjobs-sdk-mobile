@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using Microsoft.Azure.WebJobs.ServiceBus.EasyTables;
 using Microsoft.WindowsAzure.MobileServices;
+using WebJobs.Extensions.EasyTables;
 using Xunit;
 
 namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
@@ -8,7 +8,7 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
     public class EasyTableQueryValueProviderTests
     {
         [Fact]
-        public void Get_ReturnsCorrectType()
+        public void GetValue_ReturnsCorrectType()
         {
             var parameter = EasyTableTestHelper.GetValidInputQueryParameters().Single();
             var context = new EasyTableContext()

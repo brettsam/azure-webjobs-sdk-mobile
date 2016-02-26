@@ -4,8 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs.ServiceBus.EasyTables;
 using Newtonsoft.Json.Linq;
+using WebJobs.Extensions.EasyTables;
 using Xunit;
 
 namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable

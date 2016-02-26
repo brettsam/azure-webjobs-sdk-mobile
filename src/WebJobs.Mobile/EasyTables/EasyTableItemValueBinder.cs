@@ -4,16 +4,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.WindowsAzure.MobileServices;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Microsoft.Azure.WebJobs.ServiceBus.EasyTables
+namespace WebJobs.Extensions.EasyTables
 {
     internal class EasyTableItemValueBinder<T> : IValueBinder
     {
         private ParameterInfo _parameter;
         private EasyTableContext _context;
         private string _id;
-        private JToken _originalItem;
+        private JObject _originalItem;
 
         public EasyTableItemValueBinder(ParameterInfo parameter, EasyTableContext context, string id)
         {
@@ -29,53 +30,7 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.EasyTables
                 return;
             }
 
-            JToken currentValue = null;
-            bool isJObject = value.GetType() == typeof(JObject);
-
-            if (isJObject)
-            {
-                currentValue = value as JToken;
-            }
-            else
-            {
-                currentValue = JToken.FromObject(value);
-            }
-
-            if (HasChanged(currentValue))
-            {
-                // make sure it's not the Id that has changed
-                if (!string.Equals(GetId(_originalItem), GetId(currentValue), StringComparison.Ordinal))
-                {
-                    throw new InvalidOperationException("Cannot update the 'Id' property.");
-                }
-
-                if (isJObject)
-                {
-                    IMobileServiceTable table = _context.Client.GetTable(_context.ResolvedTableName);
-                    await table.UpdateAsync((JObject)value);
-                }
-                else
-                {
-                    IMobileServiceTable<T> table = _context.Client.GetTable<T>();
-                    await table.UpdateAsync((T)value);
-                }
-            }
-        }
-
-        private static string GetId(JToken item)
-        {
-            JToken idToken = item["Id"];
-            if (idToken == null)
-            {
-                idToken = item["id"];
-            }
-
-            return idToken.ToString();
-        }
-
-        private bool HasChanged(JToken value)
-        {
-            return !JToken.DeepEquals(_originalItem, value);
+            await SetValueInternalAsync(_originalItem, value, _context);
         }
 
         public Type Type
@@ -85,38 +40,86 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.EasyTables
 
         public object GetValue()
         {
+            object item = null;
+
             if (typeof(T) == typeof(JObject))
             {
                 IMobileServiceTable table = _context.Client.GetTable(_context.ResolvedTableName);
-                JToken item = null;
-
                 IgnoreNotFoundException(() =>
-                    {
-                        item = table.LookupAsync(_id).Result;
-                        _originalItem = item.DeepClone();
-                    });
-
-                return item;
+                {
+                    item = table.LookupAsync(_id).Result;
+                    _originalItem = CloneItem(item);
+                });
             }
             else
             {
                 // treat this as POCO
                 IMobileServiceTable<T> table = _context.Client.GetTable<T>();
-                T item = default(T);
-
                 IgnoreNotFoundException(() =>
-                    {
-                        item = table.LookupAsync(_id).Result;
-                        _originalItem = JToken.FromObject(item);
-                    });
-
-                return item;
+                {
+                    item = table.LookupAsync(_id).Result;
+                    _originalItem = CloneItem(item);
+                });
             }
+
+            return item;
         }
 
         public string ToInvokeString()
         {
             return string.Empty;
+        }
+
+        internal static async Task SetValueInternalAsync(JObject originalItem, object newItem, EasyTableContext context)
+        {
+            JObject currentValue = null;
+            bool isJObject = newItem.GetType() == typeof(JObject);
+
+            if (isJObject)
+            {
+                currentValue = newItem as JObject;
+            }
+            else
+            {
+                currentValue = JObject.FromObject(newItem);
+            }
+
+            if (HasChanged(originalItem, currentValue))
+            {
+                // make sure it's not the Id that has changed
+                if (!string.Equals(GetId(originalItem), GetId(currentValue), StringComparison.Ordinal))
+                {
+                    throw new InvalidOperationException("Cannot update the 'Id' property.");
+                }
+
+                if (isJObject)
+                {
+                    IMobileServiceTable table = context.Client.GetTable(context.ResolvedTableName);
+                    await table.UpdateAsync((JObject)newItem);
+                }
+                else
+                {
+                    IMobileServiceTable<T> table = context.Client.GetTable<T>();
+                    await table.UpdateAsync((T)newItem);
+                }
+            }
+        }
+
+        internal static string GetId(JObject item)
+        {
+            JToken idToken = item.GetValue("id", StringComparison.OrdinalIgnoreCase);
+            return idToken.ToString();
+        }
+
+        internal static bool HasChanged(JToken original, JToken current)
+        {
+            return !JToken.DeepEquals(original, current);
+        }
+
+        internal static JObject CloneItem(object item)
+        {
+            string serializedItem = JsonConvert.SerializeObject(item);
+            return JObject.Parse(serializedItem);
         }
 
         private static void IgnoreNotFoundException(Action action)
@@ -127,14 +130,14 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.EasyTables
             }
             catch (AggregateException ex)
             {
-                foreach (Exception e in ex.InnerExceptions)
+                foreach (Exception innerEx in ex.InnerExceptions)
                 {
                     MobileServiceInvalidOperationException mobileEx =
-                        e as MobileServiceInvalidOperationException;
+                        innerEx as MobileServiceInvalidOperationException;
                     if (mobileEx == null ||
                         mobileEx.Response.StatusCode != System.Net.HttpStatusCode.NotFound)
                     {
-                        throw;
+                        throw innerEx;
                     }
                 }
             }

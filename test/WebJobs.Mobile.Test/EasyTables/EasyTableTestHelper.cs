@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
+using WebJobs.Extensions.EasyTables;
 
 namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
 {
@@ -79,7 +81,9 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
     internal class TodoItem
     {
         public string Id { get; set; }
-        public string Data { get; set; }
+        public string Text { get; set; }
+        public bool Complete { get; set; }
+        public DateTimeOffset CompletedDate { get; set; }
     }
 
     internal class NoId
