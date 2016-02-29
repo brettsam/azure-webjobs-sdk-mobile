@@ -13,6 +13,7 @@ using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
+using WebJobs.Mobile.EasyTables;
 
 namespace WebJobs.Extensions.EasyTables
 {
@@ -51,166 +52,36 @@ namespace WebJobs.Extensions.EasyTables
                     EasyTableConfiguration.AzureWebJobsEasyTableUriName));
             }
 
-            ValidateParameter(parameter);
+            EasyTableContext easyTableContext = CreateContext(_easyTableConfig, attribute, _nameResolver);
 
-            EasyTableContext easyTableContext = new EasyTableContext
+            IBindingProvider compositeProvider = new CompositeBindingProvider(
+                new EasyTableOutputBindingProvider(_jobHostConfig, easyTableContext),
+                new EasyTableQueryBinding(context.Parameter, easyTableContext),
+                new EasyTableTableBinding(parameter, easyTableContext),
+                new EasyTableItemBinding(parameter, easyTableContext, context));
+
+            return compositeProvider.TryCreateAsync(context);
+        }
+
+        internal static EasyTableContext CreateContext(EasyTableConfiguration config, EasyTableAttribute attribute, INameResolver resolver)
+        {
+            return new EasyTableContext
             {
-                Config = this._easyTableConfig,
-                Client = new MobileServiceClient(this._easyTableConfig.EasyTableUri),
-                ResolvedId = Resolve(attribute.Id),
-                ResolvedTableName = Resolve(attribute.TableName)
+                Config = config,
+                Client = new MobileServiceClient(config.EasyTableUri),
+                ResolvedId = Resolve(attribute.Id, resolver),
+                ResolvedTableName = Resolve(attribute.TableName, resolver)
             };
-
-            Type paramType = parameter.ParameterType;
-
-            if (IsOutputBinding(parameter))
-            {
-                IBinding genericBinding = GenericBinder.BindGenericCollector(parameter, _jobHostConfig.GetOrCreateConverterManager(),
-                    typeof(EasyTableAsyncCollector<>), easyTableContext);
-                return Task.FromResult(genericBinding);
-            }
-
-            if (paramType.IsGenericType &&
-                paramType.GetGenericTypeDefinition() == typeof(IMobileServiceTableQuery<>))
-            {
-                return Task.FromResult<IBinding>(new EasyTableQueryBinding(parameter, easyTableContext));
-            }
-
-            if (typeof(IMobileServiceTable).IsAssignableFrom(paramType))
-            {
-                return Task.FromResult<IBinding>(new EasyTableTableBinding(parameter, easyTableContext));
-            }
-
-            // It must be a JObject or POCO
-            return Task.FromResult<IBinding>(new EasyTableItemBinding(parameter, easyTableContext, context));
         }
 
-        private static bool IsOutputBinding(ParameterInfo parameter)
+        private static string Resolve(string value, INameResolver resolver)
         {
-            if (parameter.IsOut)
-            {
-                return true;
-            }
-
-            Type paramType = parameter.ParameterType;
-
-            if (paramType.IsGenericType)
-            {
-                Type genericType = paramType.GetGenericTypeDefinition();
-                return genericType == typeof(ICollector<>) || genericType == typeof(IAsyncCollector<>);
-            }
-
-            return false;
-        }
-
-        private string Resolve(string value)
-        {
-            if (_nameResolver == null)
+            if (resolver == null)
             {
                 return value;
             }
 
-            return _nameResolver.ResolveWholeString(value);
-        }
-
-        private static void ValidateParameter(ParameterInfo parameter)
-        {
-            // Output Bindings:
-            //   out T
-            //   out T[]
-            //   ICollector<T>
-            //   IAsyncCollector<T>
-            //   out JObject
-            //   out JObject[]
-            //   ICollector<JObject>
-            //   IAsyncCollector<JObject>
-
-            // Input Bindings:
-            // T
-            // JObject
-            // IMobileServiceTable
-            // IMobileServiceTable<T>
-            // IMobileServiceTableQuery<T>
-
-            Type[] allowedGenericTypes = new[]
-                {
-                    typeof(ICollector<>),
-                    typeof(IAsyncCollector<>),
-                    typeof(IMobileServiceTable<>),
-                    typeof(IMobileServiceTableQuery<>)
-                };
-
-            Type[] allowedTypes = new[]
-                {
-                    typeof(JObject),
-                    typeof(IMobileServiceTable)
-                };
-
-            Type paramType = parameter.ParameterType;
-
-            if (parameter.IsOut)
-            {
-                Type coreType = paramType.GetElementType();
-
-                if (coreType.IsArray)
-                {
-                    coreType = coreType.GetElementType();
-                }
-
-                if (coreType == typeof(JObject))
-                {
-                    return;
-                }
-
-                ValidateCoreType(coreType);
-                return;
-            }
-            else
-            {
-                if (paramType.IsGenericType)
-                {
-                    Type coreType = paramType.GetGenericArguments()[0];
-                    Type genericType = paramType.GetGenericTypeDefinition();
-                    if (allowedGenericTypes.Contains(genericType))
-                    {
-                        if ((genericType == typeof(IAsyncCollector<>) ||
-                            genericType == typeof(ICollector<>)) &&
-                            coreType == typeof(JObject))
-                        {
-                            return;
-                        }
-
-                        ValidateCoreType(coreType);
-                        return;
-                    }
-                }
-                {
-                    if (allowedTypes.Contains(paramType))
-                    {
-                        return;
-                    }
-
-                    ValidateCoreType(paramType);
-                    return;
-                }
-            }
-
-            throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
-                    "Can't bind EasyTableAttribute to type '{0}'.", parameter.ParameterType));
-        }
-
-        private static void ValidateCoreType(Type coreType)
-        {
-            // POCO types must have a string id property (case insensitive).
-            IEnumerable<PropertyInfo> idProperties = coreType.GetProperties()
-                .Where(p => string.Equals("id", p.Name, StringComparison.OrdinalIgnoreCase) && p.PropertyType == typeof(string));
-
-            if (idProperties.Count() != 1)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
-                    "There must be exactly one string property named 'id' (regardless of casing) on type '{0}'",
-                    coreType.FullName));
-            }
+            return resolver.ResolveWholeString(value);
         }
     }
 }

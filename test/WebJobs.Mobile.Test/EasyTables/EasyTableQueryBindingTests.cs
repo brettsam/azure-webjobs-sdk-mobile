@@ -1,5 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.WindowsAzure.MobileServices;
+using Newtonsoft.Json.Linq;
 using WebJobs.Extensions.EasyTables;
 using Xunit;
 
@@ -21,6 +24,20 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
 
             // Assert
             Assert.Equal(expectedType, valueProvider.GetType());
+        }
+
+        [Theory]
+        [InlineData(typeof(IMobileServiceTableQuery<TodoItem>), true)]
+        [InlineData(typeof(IMobileServiceTableQuery<JObject>), false)]
+        [InlineData(typeof(IMobileServiceTableQuery<NoId>), false)]
+        [InlineData(typeof(TodoItem), false)]
+        public void IsValidQueryType_ValidatesCorrectly(Type paramType, bool expected)
+        {
+            // Act
+            bool result = EasyTableQueryBinding.IsValidQueryType(paramType);
+
+            // Assert
+            Assert.Equal(expected, result);
         }
     }
 }

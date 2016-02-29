@@ -5,10 +5,22 @@ using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Protocols;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
+using WebJobs.Mobile.EasyTables;
 
 namespace WebJobs.Extensions.EasyTables
 {
-    internal class EasyTableTableBinding : IBinding
+    /// <summary>
+    /// Provides an <see cref="IBinding"/> for valid input table parameters decorated with
+    /// an <see cref="EasyTableAttribute"/>.
+    /// </summary>
+    /// <remarks>
+    /// The method parameter type can be one of the following:
+    /// <list type="bullet">
+    /// <item><description><see cref="IMobileServiceTable"/></description></item>
+    /// <item><description><see cref="IMobileServiceTable{T}"/>, where T is any Type with a public string Id property</description></item>
+    /// </list>
+    /// </remarks>
+    internal class EasyTableTableBinding : IBinding, IBindingProvider
     {
         private ParameterInfo _parameter;
         private EasyTableContext _context;
@@ -37,11 +49,10 @@ namespace WebJobs.Extensions.EasyTables
         public Task<IValueProvider> BindAsync(object value, ValueBindingContext context)
         {
             Type paramType = _parameter.ParameterType;
-            Type coreType = typeof(JObject);
-            if (paramType.IsGenericType &&
-                paramType.GetGenericTypeDefinition() == typeof(IMobileServiceTable<>))
+            Type coreType = EasyTableUtility.GetCoreType(paramType);
+            if (coreType == typeof(IMobileServiceTable))
             {
-                coreType = paramType.GetGenericArguments()[0];
+                coreType = typeof(JObject);
             }
 
             return Task.FromResult(CreateTableValueProvider(coreType));
@@ -49,13 +60,50 @@ namespace WebJobs.Extensions.EasyTables
 
         public ParameterDescriptor ToParameterDescriptor()
         {
-            return new ParameterDescriptor();
+            return new ParameterDescriptor
+            {
+                Name = _parameter.Name
+            };
         }
 
         private IValueProvider CreateTableValueProvider(Type coreType)
         {
             Type genericType = typeof(EasyTableTableValueProvider<>).MakeGenericType(coreType);
             return (IValueProvider)Activator.CreateInstance(genericType, _parameter, _context);
+        }
+
+        public Task<IBinding> TryCreateAsync(BindingProviderContext context)
+        {
+            if (context == null)
+            {
+                throw new ArgumentNullException("context");
+            }
+
+            if (IsMobileServiceTableType(context.Parameter.ParameterType))
+            {
+                return Task.FromResult<IBinding>(this);
+            }
+
+            return Task.FromResult<IBinding>(null);
+        }
+
+        internal static bool IsMobileServiceTableType(Type paramType)
+        {
+            if (paramType == typeof(IMobileServiceTable))
+            {
+                return true;
+            }
+
+            if (paramType.IsGenericType &&
+                paramType.GetGenericTypeDefinition() == typeof(IMobileServiceTable<>))
+            {
+                if (EasyTableUtility.IsCoreTypeValidItemType(paramType))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

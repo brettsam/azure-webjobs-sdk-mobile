@@ -158,6 +158,7 @@
     <Compile Include="..\Common\TypedAsyncCollectorAdapter.cs">
       <Link>Common\TypedAsyncCollectorAdapter.cs</Link>
     </Compile>
+    <Compile Include="EasyTables\CompositeBindingProvider.cs" />
     <Compile Include="EasyTables\EasyTableAsyncCollector.cs" />
     <Compile Include="EasyTables\EasyTableAttribute.cs" />
     <Compile Include="EasyTables\EasyTableAttributeBindingProvider.cs" />
@@ -166,10 +167,12 @@
     <Compile Include="EasyTables\EasyTableHostConfigurationExtensions.cs" />
     <Compile Include="EasyTables\EasyTableItemBinding.cs" />
     <Compile Include="EasyTables\EasyTableItemValueBinder.cs" />
+    <Compile Include="EasyTables\EasyTableOutputBindingProvider.cs" />
     <Compile Include="EasyTables\EasyTableQueryBinding.cs" />
     <Compile Include="EasyTables\EasyTableQueryValueProvider.cs" />
     <Compile Include="EasyTables\EasyTableTableBinding.cs" />
     <Compile Include="EasyTables\EasyTableTableValueProvider.cs" />
+    <Compile Include="EasyTables\EasyTableUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

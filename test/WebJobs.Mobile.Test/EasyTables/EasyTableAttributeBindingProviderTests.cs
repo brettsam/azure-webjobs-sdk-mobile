@@ -8,6 +8,7 @@ using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
 using WebJobs.Extensions.EasyTables;
+using WebJobs.Mobile.Test;
 using Xunit;
 
 namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
@@ -61,7 +62,7 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
             get
             {
                 var invalidParameters = typeof(EasyTableAttributeBindingProviderTests)
-                .GetMethod("GetInvalidBindings", BindingFlags.Instance | BindingFlags.NonPublic).GetParameters();
+                    .GetMethod("GetInvalidBindings", BindingFlags.Instance | BindingFlags.NonPublic).GetParameters();
 
                 return new[]
                 {
@@ -93,14 +94,35 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
 
         [Theory]
         [MemberData("InvalidBindings")]
-        public async Task InvalidParameter_Throws_Exception(ParameterInfo parameter)
+        public async Task InvalidParameter_Returns_Null(ParameterInfo parameter)
         {
             // Arrange
             var provider = new EasyTableAttributeBindingProvider(_jobConfig, _easyTableConfig, _jobConfig.NameResolver);
             var context = new BindingProviderContext(parameter, null, CancellationToken.None);
 
             // Act
-            InvalidOperationException ex = await Assert.ThrowsAsync<InvalidOperationException>(() => provider.TryCreateAsync(context));
+            IBinding binding = await provider.TryCreateAsync(context);
+
+            // Assert
+            Assert.Null(binding);
+        }
+
+        [Fact]
+        public void CreateContext_ResolvesNames()
+        {
+            // Arrange
+            var resolver = new TestNameResolver();
+            resolver.Values.Add("MyTableName", "TestTable");
+            resolver.Values.Add("MyId", "abc123");
+
+            var attribute = new EasyTableAttribute("%MyTableName%", "%MyId%");
+
+            // Act
+            var context = EasyTableAttributeBindingProvider.CreateContext(_easyTableConfig, attribute, resolver);
+
+            // Assert
+            Assert.Equal("TestTable", context.ResolvedTableName);
+            Assert.Equal("abc123", context.ResolvedId);
         }
 
         private void GetInvalidBindings(

@@ -125,12 +125,15 @@
     <Compile Include="EasyTables\EasyTableAttributeBindingProviderTests.cs" />
     <Compile Include="EasyTables\EasyTableItemBindingTests.cs" />
     <Compile Include="EasyTables\EasyTableItemValueBinderTests.cs" />
+    <Compile Include="EasyTables\EasyTableOutputBindingProviderTests.cs" />
     <Compile Include="EasyTables\EasyTableQueryBindingTests.cs" />
     <Compile Include="EasyTables\EasyTableQueryValueProviderTests.cs" />
     <Compile Include="EasyTables\EasyTableTableBindingTests.cs" />
     <Compile Include="EasyTables\EasyTableTableValueProviderTests.cs" />
     <Compile Include="EasyTables\EasyTableTestHelper.cs" />
+    <Compile Include="EasyTables\EasyTableUtilityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestNameResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

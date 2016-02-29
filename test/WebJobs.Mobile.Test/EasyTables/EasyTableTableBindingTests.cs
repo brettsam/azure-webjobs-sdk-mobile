@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
 using WebJobs.Extensions.EasyTables;
 using Xunit;
@@ -39,6 +40,20 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
 
             // Assert
             Assert.Equal(expectedType, valueProvider.GetType());
+        }
+
+        [Theory]
+        [InlineData(typeof(IMobileServiceTable), true)]
+        [InlineData(typeof(IMobileServiceTable<TodoItem>), true)]
+        [InlineData(typeof(IMobileServiceTable<NoId>), false)]
+        [InlineData(typeof(TodoItem), false)]
+        public void IsMobileServiceTableType_CorrectlyValidates(Type tableType, bool expected)
+        {
+            // Act
+            bool result = EasyTableTableBinding.IsMobileServiceTableType(tableType);
+
+            // Assert
+            Assert.Equal(expected, result);
         }
     }
 }

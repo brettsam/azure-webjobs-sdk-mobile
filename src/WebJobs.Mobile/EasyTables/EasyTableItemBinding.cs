@@ -5,10 +5,23 @@ using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Bindings.Path;
 using Microsoft.Azure.WebJobs.Host.Protocols;
+using WebJobs.Mobile.EasyTables;
 
 namespace WebJobs.Extensions.EasyTables
 {
-    internal class EasyTableItemBinding : IBinding
+    /// <summary>
+    /// Provides an <see cref="IBinding"/> for valid input item parameters decorated with
+    /// an <see cref="EasyTableAttribute"/>. The attribute must contain a non-null <see cref="EasyTableAttribute.Id"/> value
+    /// that will be used to lookup the item and populate the method parameter.
+    /// </summary>
+    /// <remarks>
+    /// The method parameter type can be one of the following:
+    /// <list type="bullet">
+    /// <item><description><see cref="JObject"/></description></item>
+    /// <item><description>T, where T is any Type with a public string Id property</description></item>
+    /// </list>
+    /// </remarks>
+    internal class EasyTableItemBinding : IBinding, IBindingProvider
     {
         private ParameterInfo _parameter;
         private EasyTableContext _context;
@@ -51,7 +64,24 @@ namespace WebJobs.Extensions.EasyTables
 
         public ParameterDescriptor ToParameterDescriptor()
         {
-            return new ParameterDescriptor();
+            return new ParameterDescriptor
+            {
+                Name = _parameter.Name
+            };
+        }
+
+        public Task<IBinding> TryCreateAsync(BindingProviderContext context)
+        {
+            IBinding result = null;
+
+            // This wil be the last IBindingProvider checked in the CompositeBindingProvider,
+            // so simply verify the type.
+            if (EasyTableUtility.IsCoreTypeValidItemType(context.Parameter.ParameterType))
+            {
+                result = this;
+            }
+
+            return Task.FromResult<IBinding>(result);
         }
 
         internal string ResolveId(IReadOnlyDictionary<string, object> bindingData)
