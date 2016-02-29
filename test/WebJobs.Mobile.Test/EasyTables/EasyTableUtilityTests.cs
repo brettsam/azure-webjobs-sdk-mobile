@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable;
 using Microsoft.WindowsAzure.MobileServices;
@@ -13,44 +11,30 @@ namespace WebJobs.Mobile.Test.EasyTables
 {
     public class EasyTableUtilityTests
     {
-        public static IEnumerable<object[]> ValidTypes
-        {
-            get
-            {
-                var parameters = EasyTableTestHelper.GetAllValidParameters().ToArray();
-
-                var otherTypes = typeof(EasyTableUtilityTests)
-                    .GetMethod("OtherTypes", BindingFlags.NonPublic | BindingFlags.Static)
-                    .GetParameters();
-
-                return new[]
-                {
-                    new object[] { parameters[0], typeof(JObject) },
-                    new object[] { parameters[1], typeof(TodoItem) },
-                    new object[] { parameters[2], typeof(JObject) },
-                    new object[] { parameters[3], typeof(TodoItem) },
-                    new object[] { parameters[4], typeof(JObject) },
-                    new object[] { parameters[5], typeof(TodoItem) },
-                    new object[] { parameters[6], typeof(JObject) },
-                    new object[] { parameters[7], typeof(TodoItem) },
-                    new object[] { parameters[8], typeof(JObject) },
-                    new object[] { parameters[9], typeof(TodoItem) },
-                    new object[] { parameters[10], typeof(IMobileServiceTable) },
-                    new object[] { parameters[11], typeof(TodoItem) },
-                    new object[] { parameters[12], typeof(TodoItem) },
-                    new object[] { otherTypes[0], typeof(IEnumerable<TodoItem>) },
-                    new object[] { otherTypes[1], typeof(TodoItem[]) },
-                    new object[] { otherTypes[2], typeof(TodoItem) },
-                };
-            }
-        }
-
         [Theory]
-        [MemberData("ValidTypes")]
-        public void GetCoreType_Returns_CorrectType(ParameterInfo parameter, Type expectedType)
+        [InlineData(typeof(JObject), true, typeof(JObject))]
+        [InlineData(typeof(TodoItem), true, typeof(TodoItem))]
+        [InlineData(typeof(JObject[]), true, typeof(JObject))]
+        [InlineData(typeof(TodoItem[]), true, typeof(TodoItem))]
+        [InlineData(typeof(IAsyncCollector<JObject>), false, typeof(JObject))]
+        [InlineData(typeof(IAsyncCollector<TodoItem>), false, typeof(TodoItem))]
+        [InlineData(typeof(ICollector<JObject>), false, typeof(JObject))]
+        [InlineData(typeof(ICollector<TodoItem>), false, typeof(TodoItem))]
+        [InlineData(typeof(JObject), false, typeof(JObject))]
+        [InlineData(typeof(TodoItem), false, typeof(TodoItem))]
+        [InlineData(typeof(IMobileServiceTable), false, typeof(IMobileServiceTable))]
+        [InlineData(typeof(IMobileServiceTable<TodoItem>), false, typeof(TodoItem))]
+        [InlineData(typeof(IMobileServiceTableQuery<TodoItem>), false, typeof(TodoItem))]
+        [InlineData(typeof(IEnumerable<IEnumerable<TodoItem>>), false, typeof(IEnumerable<TodoItem>))]
+        [InlineData(typeof(TodoItem[][]), false, typeof(TodoItem[]))]
+        [InlineData(typeof(IAsyncCollector<TodoItem>), true, typeof(TodoItem))]
+        public void GetCoreType_Returns_CorrectType(Type paramType, bool isOutParam, Type expectedType)
         {
+            // Arrange
+            Type typeToTest = isOutParam ? paramType.MakeByRefType() : paramType;
+
             // Act
-            Type coreType = EasyTableUtility.GetCoreType(parameter.ParameterType);
+            Type coreType = EasyTableUtility.GetCoreType(typeToTest);
 
             // Assert
             Assert.Equal(coreType, expectedType);
@@ -72,14 +56,6 @@ namespace WebJobs.Mobile.Test.EasyTables
 
             // Assert
             Assert.Equal(expected, result);
-        }
-
-        private static void OtherTypes(
-            IEnumerable<IEnumerable<TodoItem>> enumOfEnumOfT,
-            TodoItem[][] arrayOfArrays,
-            out IAsyncCollector<TodoItem> collectorOut)
-        {
-            collectorOut = null;
         }
 
         private class TwoId
