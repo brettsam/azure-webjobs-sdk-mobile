@@ -92,7 +92,7 @@ namespace WebJobs.Mobile.EasyTables
         }
 
         /// <summary>
-        /// Checks whether the specified type has a single generic arguement. If so,
+        /// Checks whether the specified type has a single generic argument. If so,
         /// that argument is returned via the out parameter.
         /// </summary>
         /// <param name="type">The single generic argument.</param>
