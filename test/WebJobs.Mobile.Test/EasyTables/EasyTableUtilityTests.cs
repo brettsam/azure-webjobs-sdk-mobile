@@ -1,7 +1,11 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
 using WebJobs.Mobile.EasyTables;
@@ -28,16 +32,22 @@ namespace WebJobs.Mobile.Test.EasyTables
         [InlineData(typeof(IEnumerable<IEnumerable<TodoItem>>), false, typeof(IEnumerable<TodoItem>))]
         [InlineData(typeof(TodoItem[][]), false, typeof(TodoItem[]))]
         [InlineData(typeof(IAsyncCollector<TodoItem>), true, typeof(TodoItem))]
-        public void GetCoreType_Returns_CorrectType(Type paramType, bool isOutParam, Type expectedType)
+        public void GetCoreType_Returns_CorrectType(Type parameterType, bool isOutParameter, Type expectedType)
         {
             // Arrange
-            Type typeToTest = isOutParam ? paramType.MakeByRefType() : paramType;
+            Type typeToTest = isOutParameter ? parameterType.MakeByRefType() : parameterType;
 
             // Act
             Type coreType = EasyTableUtility.GetCoreType(typeToTest);
 
             // Assert
             Assert.Equal(coreType, expectedType);
+        }
+
+        [Fact]
+        public void GetCoreType_ThrowsException_IfMultipleGenericArguments()
+        {
+            Assert.Throws<InvalidOperationException>(() => EasyTableUtility.GetCoreType(typeof(IDictionary<string, string>)));
         }
 
         [Theory]
@@ -58,12 +68,17 @@ namespace WebJobs.Mobile.Test.EasyTables
             Assert.Equal(expected, result);
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses",
+            Justification = "This is a test class used to test different Types")]
         private class TwoId
         {
             public string ID { get; set; }
-            public string id { get; set; }
+
+            public string Id { get; set; }
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses",
+            Justification = "This is a test class used to test different Types")]
         private class PrivateId
         {
             private string Id { get; set; }

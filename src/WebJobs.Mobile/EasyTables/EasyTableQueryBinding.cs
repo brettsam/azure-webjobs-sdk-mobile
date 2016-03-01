@@ -1,4 +1,8 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Bindings;
@@ -37,7 +41,7 @@ namespace WebJobs.Extensions.EasyTables
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
             return BindAsync(null, context.ValueContext);
@@ -45,8 +49,13 @@ namespace WebJobs.Extensions.EasyTables
 
         public Task<IValueProvider> BindAsync(object value, ValueBindingContext context)
         {
-            Type coreType = _parameter.ParameterType.GetGenericArguments()[0];
-            return Task.FromResult(CreateQueryValueProvider(coreType));
+            Type genericArgType = null;
+            if (EasyTableUtility.TryGetSingleGenericArgument(out genericArgType))
+            {
+                return Task.FromResult(CreateQueryValueProvider(genericArgType));
+            }
+
+            throw new InvalidOperationException("Easy Table parameter types can only have one generic argument.");
         }
 
         public ParameterDescriptor ToParameterDescriptor()
@@ -65,6 +74,11 @@ namespace WebJobs.Extensions.EasyTables
 
         public Task<IBinding> TryCreateAsync(BindingProviderContext context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             if (IsValidQueryType(context.Parameter.ParameterType))
             {
                 return Task.FromResult<IBinding>(this);

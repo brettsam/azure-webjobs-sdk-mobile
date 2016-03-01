@@ -1,4 +1,8 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -9,7 +13,7 @@ using Newtonsoft.Json.Linq;
 using WebJobs.Extensions.EasyTables;
 using Xunit;
 
-namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
+namespace WebJobs.Mobile.Test.EasyTables
 {
     public class EasyTableItemBindingTests
     {
@@ -21,8 +25,8 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
 
                 return new[]
                 {
-                    new object[] {itemParams[0], typeof(EasyTableItemValueBinder<JObject>)},
-                    new object[] {itemParams[1], typeof(EasyTableItemValueBinder<TodoItem>)}
+                    new object[] { itemParams[0], typeof(EasyTableItemValueBinder<JObject>) },
+                    new object[] { itemParams[1], typeof(EasyTableItemValueBinder<TodoItem>) }
                 };
             }
         }

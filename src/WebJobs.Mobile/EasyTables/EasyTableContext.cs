@@ -1,5 +1,8 @@
-﻿using Microsoft.WindowsAzure.MobileServices;
-using WebJobs.Extensions.EasyTables;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using Microsoft.WindowsAzure.MobileServices;
 
 namespace WebJobs.Extensions.EasyTables
 {

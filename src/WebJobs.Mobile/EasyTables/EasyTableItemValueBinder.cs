@@ -1,4 +1,8 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,6 +27,11 @@ namespace WebJobs.Extensions.EasyTables
             _id = id;
         }
 
+        public Type Type
+        {
+            get { return _parameter.ParameterType; }
+        }
+
         public async Task SetValueAsync(object value, CancellationToken cancellationToken)
         {
             if (value == null || _originalItem == null)
@@ -31,11 +40,6 @@ namespace WebJobs.Extensions.EasyTables
             }
 
             await SetValueInternalAsync(_originalItem, value, _context);
-        }
-
-        public Type Type
-        {
-            get { return _parameter.ParameterType; }
         }
 
         public object GetValue()

@@ -1,25 +1,36 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
-using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
 
 namespace WebJobs.Mobile.EasyTables
 {
     internal static class EasyTableUtility
     {
+        /// <summary>
+        /// Gets the core type of the specified type. Then validates that it is
+        /// usable with Easy Tables.
+        /// </summary>
+        /// <param name="type">The type to evaluate.</param>
+        /// <returns></returns>
         public static bool IsCoreTypeValidItemType(Type type)
         {
             Type coreType = GetCoreType(type);
             return IsValidItemType(coreType);
         }
 
-        // Evaluates whether the specified type is valid for use with EasyTables. The type
-        // must contain a single public string 'Id' property or be of type JObject.
+        /// <summary>
+        /// Evaluates whether the specified type is valid for use with EasyTables. The type
+        /// must contain a single public string 'Id' property or be of type JObject.
+        /// </summary>
+        /// <param name="itemType">The type to evaluate.</param>
+        /// <returns></returns>
         public static bool IsValidItemType(Type itemType)
         {
             if (itemType == typeof(JObject))
@@ -51,7 +62,7 @@ namespace WebJobs.Mobile.EasyTables
         /// <item><description>out T[]</description></item>
         /// </list>
         /// </remarks>
-        /// <param name="parameter">The Type to evaluate.</param>
+        /// <param name="type">The Type to evaluate.</param>
         /// <returns>The core Type</returns>
         public static Type GetCoreType(Type type)
         {
@@ -68,11 +79,36 @@ namespace WebJobs.Mobile.EasyTables
 
             if (coreType.IsGenericType)
             {
-                // TODO: throw if more than 1 generic arg
-                return coreType.GetGenericArguments()[0];
+                Type genericArgType = null;
+                if (TryGetSingleGenericArgument(out genericArgType))
+                {
+                    return genericArgType;
+                }
+
+                throw new InvalidOperationException("Easy Table parameter types can only have one generic argument.");
             }
 
             return coreType;
+        }
+
+        /// <summary>
+        /// Checks whether the specified type has a single generic arguement. If so,
+        /// that argument is returned via the out parameter.
+        /// </summary>
+        /// <param name="type">The single generic argument.</param>
+        /// <returns>true if there was a single generic argument. Otherwise, false.</returns>
+        public static bool TryGetSingleGenericArgument(out Type type)
+        {
+            type = null;
+            Type[] genericArgTypes = type.GetGenericArguments();
+
+            if (genericArgTypes.Length != 1)
+            {
+                return false;
+            }
+
+            type = genericArgTypes[0];
+            return true;
         }
     }
 }

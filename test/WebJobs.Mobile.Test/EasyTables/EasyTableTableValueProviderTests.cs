@@ -1,5 +1,8 @@
-﻿using System.Linq;
-using Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System.Linq;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
 using WebJobs.Extensions.EasyTables;
@@ -32,7 +35,7 @@ namespace WebJobs.Mobile.Test.EasyTables
         }
 
         [Fact]
-        public void GetValue_POCO_ReturnsCorrectTable()
+        public void GetValue_Poco_ReturnsCorrectTable()
         {
             // Arrange
             var parameter = EasyTableTestHelper.GetValidInputTableParameters()

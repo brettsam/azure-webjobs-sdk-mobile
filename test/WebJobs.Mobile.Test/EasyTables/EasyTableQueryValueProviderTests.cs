@@ -1,9 +1,13 @@
-﻿using System.Linq;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System.Linq;
 using Microsoft.WindowsAzure.MobileServices;
 using WebJobs.Extensions.EasyTables;
 using Xunit;
 
-namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
+namespace WebJobs.Mobile.Test.EasyTables
 {
     public class EasyTableQueryValueProviderTests
     {

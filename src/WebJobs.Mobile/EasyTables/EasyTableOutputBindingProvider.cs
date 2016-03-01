@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host.Bindings;
@@ -20,7 +21,7 @@ namespace WebJobs.Mobile.EasyTables
     /// The method parameter type can be one of the following:
     /// <list type="bullet">
     /// <item><description><see cref="ICollector{T}"/>, where T is either <see cref="JObject"/> or any type with a public string Id property.</description></item>
-    /// <item><description><see cref="IAsyncCollector{T}"/>, where T is either <see cref="JObject"/> or any type with a public string Id property.</description></description></item>
+    /// <item><description><see cref="IAsyncCollector{T}"/>, where T is either <see cref="JObject"/> or any type with a public string Id property.</description></item>
     /// <item><description>out <see cref="JObject"/></description></item>
     /// <item><description>out <see cref="JObject"/>[]</description></item>
     /// <item><description>out T, where T is any Type with a public string Id property</description></item>
@@ -40,6 +41,11 @@ namespace WebJobs.Mobile.EasyTables
 
         public Task<IBinding> TryCreateAsync(BindingProviderContext context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             ParameterInfo parameter = context.Parameter;
 
             if (IsValidOutType(parameter.ParameterType) ||

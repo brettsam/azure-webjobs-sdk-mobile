@@ -23,6 +23,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>..\Src.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\Debug\WebJobs.Mobile.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -57,8 +60,8 @@
       <HintPath>..\..\packages\Microsoft.Data.Services.Client.5.6.2\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=1.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.WindowsAzure.ConfigurationManager.1.8.0.0\lib\net35-full\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Mobile, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -106,59 +109,80 @@
     </Compile>
     <Compile Include="..\Common\CommonCollectorBinding.cs">
       <Link>Common\CommonCollectorBinding.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\CommonTriggerBinding.cs">
       <Link>Common\CommonTriggerBinding.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="..\Common\CompositeBindingProvider.cs">
+      <Link>Common\CompositeBindingProvider.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\ConstantValueProvider.cs">
       <Link>Common\ConstantValueProvider.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\ConverterManager.cs">
       <Link>Common\ConverterManager.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\GenericBinder.cs">
       <Link>Common\GenericBinder.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\IConverterManager.cs">
       <Link>Common\IConverterManager.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\IFlushCollector.cs">
       <Link>Common\IFlushCollector.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\ITriggerBindingStrategy.cs">
       <Link>Common\ITriggerBindingStrategy.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\OutArgumentBinding\CommonAsyncCollectorValueProvider.cs">
       <Link>Common\CommonAsyncCollectorValueProvider.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\OutArgumentBinding\OutArrayValueProvider.cs">
       <Link>Common\OutArrayValueProvider.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\OutArgumentBinding\OutValueProvider.cs">
       <Link>Common\OutValueProvider.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\SyncAsyncCollectorAdapter.cs">
       <Link>Common\SyncAsyncCollectorAdapter.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\TriggerArgumentBinding\ArraryTriggerArgumentBinding.cs">
       <Link>Common\ArraryTriggerArgumentBinding.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\TriggerArgumentBinding\PocoTriggerArgumentBinding.cs">
       <Link>Common\PocoTriggerArgumentBinding.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\TriggerArgumentBinding\SimpleTriggerArgumentBinding.cs">
       <Link>Common\SimpleTriggerArgumentBinding.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\TriggerArgumentBinding\StringTriggerArgumentBinding.cs">
       <Link>Common\StringTriggerArgumentBinding.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\Triggers\ITriggerDataArgumentBinding.cs">
       <Link>Common\ITriggerDataArgumentBinding.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="..\Common\TypedAsyncCollectorAdapter.cs">
       <Link>Common\TypedAsyncCollectorAdapter.cs</Link>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
-    <Compile Include="EasyTables\CompositeBindingProvider.cs" />
     <Compile Include="EasyTables\EasyTableAsyncCollector.cs" />
     <Compile Include="EasyTables\EasyTableAttribute.cs" />
     <Compile Include="EasyTables\EasyTableAttributeBindingProvider.cs" />
@@ -179,6 +203,11 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\..\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -186,7 +215,9 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets'))" />
+    <Error Condition="!Exists('..\..\packages\StyleCop.MSBuild.4.7.50.0\build\StyleCop.MSBuild.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\StyleCop.MSBuild.4.7.50.0\build\StyleCop.MSBuild.Targets'))" />
   </Target>
+  <Import Project="..\..\packages\StyleCop.MSBuild.4.7.50.0\build\StyleCop.MSBuild.Targets" Condition="Exists('..\..\packages\StyleCop.MSBuild.4.7.50.0\build\StyleCop.MSBuild.Targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

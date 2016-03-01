@@ -1,5 +1,6 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
 
 using System;
 using Microsoft.Azure.WebJobs.Host;
@@ -10,20 +11,20 @@ using WebJobs.Extensions.EasyTables;
 namespace Microsoft.Azure.WebJobs
 {
     /// <summary>
-    ///
+    /// Extension methods for EasyTable integration.
     /// </summary>
     public static class EasyTablesHostConfigurationExtensions
     {
         /// <summary>
-        ///
+        /// Enables use of the EasyTable extensions.
         /// </summary>
-        /// <param name="config"></param>
-        /// <param name="easyTablesConfig"></param>
+        /// <param name="config">The <see cref="JobHostConfiguration"/> to configure.</param>
+        /// <param name="easyTablesConfig">The <see cref="EasyTableConfiguration"/> to use.</param>
         public static void UseEasyTables(this JobHostConfiguration config, EasyTableConfiguration easyTablesConfig = null)
         {
             if (config == null)
             {
-                throw new ArgumentNullException("config");
+                throw new ArgumentNullException(nameof(config));
             }
 
             if (easyTablesConfig == null)
@@ -49,7 +50,7 @@ namespace Microsoft.Azure.WebJobs
             {
                 if (context == null)
                 {
-                    throw new ArgumentNullException("context");
+                    throw new ArgumentNullException(nameof(context));
                 }
 
                 // Register our extension binding providers

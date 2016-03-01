@@ -1,10 +1,15 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Bindings;
 using Microsoft.Azure.WebJobs.Host.Bindings.Path;
 using Microsoft.Azure.WebJobs.Host.Protocols;
+using Newtonsoft.Json.Linq;
 using WebJobs.Mobile.EasyTables;
 
 namespace WebJobs.Extensions.EasyTables
@@ -49,7 +54,7 @@ namespace WebJobs.Extensions.EasyTables
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
             string id = ResolveId(context.BindingData);
@@ -72,6 +77,11 @@ namespace WebJobs.Extensions.EasyTables
 
         public Task<IBinding> TryCreateAsync(BindingProviderContext context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             IBinding result = null;
 
             // This wil be the last IBindingProvider checked in the CompositeBindingProvider,

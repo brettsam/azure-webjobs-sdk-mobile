@@ -1,0 +1,22 @@
+<!-- See http://msdn.microsoft.com/en-us/library/bb514188.aspx for details -->
+<Dictionary>
+  <Words>
+    <Unrecognized>
+    </Unrecognized>
+    <Recognized>
+      <Word>poco</Word>
+      <Word>EasyTableConfiguration</Word>
+      <Word>EasyTableUri</Word>
+      <Word>AzureWebJobsMobileAppUri</Word>
+    </Recognized>
+    <Deprecated />
+    <Compound>
+    </Compound>
+    <DiscreteExceptions>
+    </DiscreteExceptions>
+  </Words>
+  <Acronyms>
+    <CasingExceptions>
+    </CasingExceptions>
+  </Acronyms>
+</Dictionary>

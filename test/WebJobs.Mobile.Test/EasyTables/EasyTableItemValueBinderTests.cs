@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.Host.Bindings;
-using Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable;
 using Microsoft.WindowsAzure.MobileServices;
 using Moq;
 using Newtonsoft.Json;
@@ -74,7 +74,7 @@ namespace WebJobs.Mobile.Test.EasyTables
             IValueBinder binder = CreateJObjectBinder(parameter, out mockClient, out mockTable);
             mockTable
                 .Setup(m => m.LookupAsync("abc123"))
-                .ThrowsAsync(new MobileServiceInvalidOperationException("", null, new HttpResponseMessage(HttpStatusCode.NotFound)));
+                .ThrowsAsync(new MobileServiceInvalidOperationException(string.Empty, null, new HttpResponseMessage(HttpStatusCode.NotFound)));
 
             // Act
             var value = binder.GetValue();
@@ -95,7 +95,7 @@ namespace WebJobs.Mobile.Test.EasyTables
             IValueBinder binder = CreatePocoBinder(parameter, out mockClient, out mockTable);
             mockTable
                 .Setup(m => m.LookupAsync("abc123"))
-                .ThrowsAsync(new MobileServiceInvalidOperationException("", null, new HttpResponseMessage(HttpStatusCode.NotFound)));
+                .ThrowsAsync(new MobileServiceInvalidOperationException(string.Empty, null, new HttpResponseMessage(HttpStatusCode.NotFound)));
 
             // Act
             var value = binder.GetValue();
@@ -116,7 +116,7 @@ namespace WebJobs.Mobile.Test.EasyTables
             IValueBinder binder = CreatePocoBinder(parameter, out mockClient, out mockTable);
             mockTable
                 .Setup(m => m.LookupAsync("abc123"))
-                .Throws(new MobileServiceInvalidOperationException("", null, new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)));
+                .Throws(new MobileServiceInvalidOperationException(string.Empty, null, new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)));
 
             // Act
             var ex = Assert.Throws<MobileServiceInvalidOperationException>(() => binder.GetValue());
@@ -135,7 +135,7 @@ namespace WebJobs.Mobile.Test.EasyTables
             IValueBinder binder = CreateJObjectBinder(parameter, out mockClient, out mockTable);
             mockTable
                 .Setup(m => m.LookupAsync("abc123"))
-                .Throws(new MobileServiceInvalidOperationException("", null, new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)));
+                .Throws(new MobileServiceInvalidOperationException(string.Empty, null, new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)));
 
             // Act
             var ex = Assert.Throws<MobileServiceInvalidOperationException>(() => binder.GetValue());

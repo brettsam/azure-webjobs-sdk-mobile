@@ -1,18 +1,15 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Azure.WebJobs.Host.Bindings;
-using Microsoft.Azure.WebJobs.ServiceBus;
 using Microsoft.WindowsAzure.MobileServices;
-using Newtonsoft.Json.Linq;
 using WebJobs.Mobile.EasyTables;
 
 namespace WebJobs.Extensions.EasyTables
@@ -34,7 +31,7 @@ namespace WebJobs.Extensions.EasyTables
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
             ParameterInfo parameter = context.Parameter;
@@ -44,21 +41,23 @@ namespace WebJobs.Extensions.EasyTables
                 return Task.FromResult<IBinding>(null);
             }
 
-            if (string.IsNullOrEmpty(_easyTableConfig.EasyTableUri))
+            if (string.IsNullOrEmpty(_easyTableConfig.MobileAppUri))
             {
                 throw new InvalidOperationException(
-                    string.Format(CultureInfo.InstalledUICulture,
+                    string.Format(CultureInfo.CurrentCulture,
                     "The Easy Tables Uri must be set either via a '{0}' app setting or directly in code via EasyTableConfiguration.EasyTableUri.",
-                    EasyTableConfiguration.AzureWebJobsEasyTableUriName));
+                    EasyTableConfiguration.AzureWebJobsMobileAppUriName));
             }
 
             EasyTableContext easyTableContext = CreateContext(_easyTableConfig, attribute, _nameResolver);
 
-            IBindingProvider compositeProvider = new CompositeBindingProvider(
+            IBindingProvider compositeProvider = new CompositeBindingProvider(new IBindingProvider[]
+            {
                 new EasyTableOutputBindingProvider(_jobHostConfig, easyTableContext),
                 new EasyTableQueryBinding(context.Parameter, easyTableContext),
                 new EasyTableTableBinding(parameter, easyTableContext),
-                new EasyTableItemBinding(parameter, easyTableContext, context));
+                new EasyTableItemBinding(parameter, easyTableContext, context)
+            });
 
             return compositeProvider.TryCreateAsync(context);
         }
@@ -68,7 +67,7 @@ namespace WebJobs.Extensions.EasyTables
             return new EasyTableContext
             {
                 Config = config,
-                Client = new MobileServiceClient(config.EasyTableUri),
+                Client = new MobileServiceClient(config.MobileAppUri),
                 ResolvedId = Resolve(attribute.Id, resolver),
                 ResolvedTableName = Resolve(attribute.TableName, resolver)
             };

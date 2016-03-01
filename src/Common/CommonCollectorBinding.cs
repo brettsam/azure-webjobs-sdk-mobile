@@ -1,15 +1,15 @@
 ﻿// Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-using Microsoft.Azure.WebJobs.Host.Bindings;
-using Microsoft.Azure.WebJobs.Host.Protocols;
 using System;
 using System.Threading.Tasks;
+using Microsoft.Azure.WebJobs.Host.Bindings;
+using Microsoft.Azure.WebJobs.Host.Protocols;
 
 namespace Microsoft.Azure.WebJobs.ServiceBus
 {
-    // This binding is static per parameter, and then called on each invocation 
-    // to produce a new parameter instance. 
+    // This binding is static per parameter, and then called on each invocation
+    // to produce a new parameter instance.
     internal class CommonCollectorBinding<TMessage, TContext> : IBinding
     {
         private readonly TContext _client;
@@ -42,7 +42,7 @@ namespace Microsoft.Azure.WebJobs.ServiceBus
         {
             if (context == null)
             {
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             }
 
             return BindAsync(null, context.ValueContext);

@@ -1,12 +1,17 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Azure.WebJobs;
 using Microsoft.WindowsAzure.MobileServices;
 using Newtonsoft.Json.Linq;
 using WebJobs.Extensions.EasyTables;
 
-namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
+namespace WebJobs.Mobile.Test.EasyTables
 {
     internal class EasyTableTestHelper
     {
@@ -44,6 +49,8 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
                .GetMethod("InputQueryParameters", BindingFlags.Instance | BindingFlags.NonPublic).GetParameters();
         }
 
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters",
+            Justification = "This is a test method used for generiating ParameterInfo via Reflection.")]
         private void OutputParameters(
             [EasyTable] out JObject jobjectOut,
             [EasyTable] out TodoItem pocoOut,
@@ -60,34 +67,27 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
             pocoArrayOut = null;
         }
 
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters",
+            Justification = "This is a test method used for generiating ParameterInfo via Reflection.")]
         private void InputItemParameters(
             [EasyTable] JObject jobject,
             [EasyTable] TodoItem poco)
         {
         }
 
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters",
+            Justification = "This is a test method used for generiating ParameterInfo via Reflection.")]
         private void InputTableParameters(
             [EasyTable] IMobileServiceTable jobjectTable,
             [EasyTable] IMobileServiceTable<TodoItem> pocoTable)
         {
         }
 
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters",
+            Justification = "This is a test method used for generiating ParameterInfo via Reflection.")]
         private void InputQueryParameters(
             [EasyTable] IMobileServiceTableQuery<TodoItem> query)
         {
         }
-    }
-
-    internal class TodoItem
-    {
-        public string Id { get; set; }
-        public string Text { get; set; }
-        public bool Complete { get; set; }
-        public DateTimeOffset CompletedDate { get; set; }
-    }
-
-    internal class NoId
-    {
-        public string Data { get; set; }
     }
 }

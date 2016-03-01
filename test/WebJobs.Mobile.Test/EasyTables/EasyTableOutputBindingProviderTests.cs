@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable;
 using Newtonsoft.Json.Linq;
 using WebJobs.Mobile.EasyTables;
 using Xunit;
@@ -25,10 +23,10 @@ namespace WebJobs.Mobile.Test.EasyTables
         [InlineData(typeof(JObject[]), false, false)]
         [InlineData(typeof(NoId), true, false)]
         [InlineData(typeof(ICollector<TodoItem>), true, false)]
-        public void IsValidOutType_ValidatesCorrectly(Type paramType, bool isOutParam, bool expected)
+        public void IsValidOutType_ValidatesCorrectly(Type parameterType, bool isOutParameter, bool expected)
         {
             // Arrange
-            Type typeToTest = isOutParam ? paramType.MakeByRefType() : paramType;
+            Type typeToTest = isOutParameter ? parameterType.MakeByRefType() : parameterType;
 
             // Act
             bool result = EasyTableOutputBindingProvider.IsValidOutType(typeToTest);
@@ -45,10 +43,10 @@ namespace WebJobs.Mobile.Test.EasyTables
         [InlineData(typeof(ICollector<TodoItem>), true, false)]
         [InlineData(typeof(TodoItem), false, false)]
         [InlineData(typeof(ICollector<NoId>), false, false)]
-        public void IsValidCollectorType_ValidatesCorrectly(Type paramType, bool isOutParam, bool expected)
+        public void IsValidCollectorType_ValidatesCorrectly(Type parameterType, bool isOutParameter, bool expected)
         {
             // Arrange
-            Type typeToTest = isOutParam ? paramType.MakeByRefType() : paramType;
+            Type typeToTest = isOutParameter ? parameterType.MakeByRefType() : parameterType;
 
             // Act
             bool result = EasyTableOutputBindingProvider.IsValidCollectorType(typeToTest);

@@ -1,4 +1,8 @@
-﻿using System;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.MobileServices;
@@ -6,7 +10,7 @@ using Newtonsoft.Json.Linq;
 using WebJobs.Extensions.EasyTables;
 using Xunit;
 
-namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
+namespace WebJobs.Mobile.Test.EasyTables
 {
     public class EasyTableQueryBindingTests
     {
@@ -31,10 +35,10 @@ namespace Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable
         [InlineData(typeof(IMobileServiceTableQuery<JObject>), false)]
         [InlineData(typeof(IMobileServiceTableQuery<NoId>), false)]
         [InlineData(typeof(TodoItem), false)]
-        public void IsValidQueryType_ValidatesCorrectly(Type paramType, bool expected)
+        public void IsValidQueryType_ValidatesCorrectly(Type parameterType, bool expected)
         {
             // Act
-            bool result = EasyTableQueryBinding.IsValidQueryType(paramType);
+            bool result = EasyTableQueryBinding.IsValidQueryType(parameterType);
 
             // Assert
             Assert.Equal(expected, result);

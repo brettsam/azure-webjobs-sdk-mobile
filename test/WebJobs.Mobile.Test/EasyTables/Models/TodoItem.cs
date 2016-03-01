@@ -4,16 +4,13 @@
 
 using System;
 
-namespace WebJobs.Mobile.Sample
+namespace WebJobs.Mobile.Test.EasyTables
 {
-    public class Item
+    internal class TodoItem
     {
         public string Id { get; set; }
         public string Text { get; set; }
-        public bool IsProcessed { get; set; }
-        public DateTimeOffset ProcessedAt { get; set; }
-
-        // EasyTable properties
-        public DateTimeOffset CreatedAt { get; set; }
+        public bool Complete { get; set; }
+        public DateTimeOffset CompletedDate { get; set; }
     }
 }

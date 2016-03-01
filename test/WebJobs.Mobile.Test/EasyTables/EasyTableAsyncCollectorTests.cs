@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿// ----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// ----------------------------------------------------------------------------
+
+using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs.ServiceBus;
-using Microsoft.Azure.WebJobs.ServiceBus.UnitTests.EasyTable;
 using Microsoft.WindowsAzure.MobileServices;
 using Moq;
 using Newtonsoft.Json.Linq;
